@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "lib": ["dom", "dom.iterable", "esnext"],
+      "module": "esnext",
+      "allowJs": true,
+      "esModuleInterop": true,
+      "strict": false,
+      "strictNullChecks": true,
+      "moduleResolution": "node",
+      "outDir": "./build",
+      "jsx": "preserve"
+    },
+    "exclude": ["node_modules", "public", ".cache", "build"]
+  }
+  
