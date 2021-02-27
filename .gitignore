@@ -70,9 +70,10 @@ public
 yarn-error.log
 .pnp/
 .pnp.js
-yarn.lock
-package-lock.json
+# yarn.lock
+# package-lock.json
 # Ignore any lock file other than main lock file
-!/yarn.lock
+# !/yarn.lock
 # Yarn Integrity file
+
 .yarn-integrity
