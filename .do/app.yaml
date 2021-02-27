@@ -1,11 +1,11 @@
-name: sample-monorepo
+name: bookie
 
 static_sites:
 - name: app
   environment_slug: html
   github:
     repo: neurologists/bookie
-    branch: main
+    branch: master
     deploy_on_push: true
   source_dir: packages/app
   index_document: index.html
