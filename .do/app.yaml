@@ -1,47 +1,20 @@
 name: bookie
 
 static_sites:
-- name: app
-  environment_slug: html
-  github:
-    repo: neurologists/bookie
-    branch: master
-    deploy_on_push: true
-  source_dir: packages/app
-  index_document: index.html
-  # error_document: error.html
-  build_command: npm run build
-  output_dir: public
-  routes:
-  - path: /
+  - name: app
+    environment_slug: gatsby
+    github:
+      repo: neurologists/bookie
+      branch: master
+      deploy_on_push: true
+    source_dir: packages/app
+    build_command: npm run build
 
-# services:
-# - name: api
-#   environment_slug: go
-#   github:
-#     repo: neurologists/bookie
-#     branch: main
-#     deploy_on_push: true
-#   source_dir: api
-#   routes:
-#   - path: /api
-
-# - name: webhook
-#   environment_slug: go
-#   github:
-#     repo: neurologists/bookie
-#     branch: main
-#     deploy_on_push: true
-#   source_dir: webhook
-#   routes:
-#   - path: /webhook
-
-# workers:
-# - name: worker
-#   github:
-#     repo: neurologists/bookie
-#     branch: main
-#     deploy_on_push: true
-#   source_dir: worker
-#   dockerfile_path: worker/Dockerfile
-#   run_command: sh -c "cat ./ok && sleep infinity"
+workers:
+  - name: updater
+    environment_slug: python
+    github:
+      branch: main
+      deploy_on_push: true
+      repo: neurologists/bookie
+    run_command:
