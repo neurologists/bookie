@@ -14,7 +14,7 @@ workers:
   - name: updater
     environment_slug: python
     github:
-      branch: main
+      branch: master
       deploy_on_push: true
       repo: neurologists/bookie
     run_command: python main.py
