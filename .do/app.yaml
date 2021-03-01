@@ -17,4 +17,4 @@ workers:
       branch: main
       deploy_on_push: true
       repo: neurologists/bookie
-    run_command:
+    run_command: python main.py
