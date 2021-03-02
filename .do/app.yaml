@@ -9,12 +9,11 @@ static_sites:
       deploy_on_push: true
     source_dir: packages/app
     build_command: npm run build
-
-workers:
-  - name: updater
-    environment_slug: python
-    github:
-      branch: main
-      deploy_on_push: true
-      repo: neurologists/bookie
-    run_command: python main.py
+# workers:
+#   - name: updater
+#     environment_slug: python
+#     github:
+#       branch: main
+#       deploy_on_push: true
+#       repo: neurologists/bookie
+#     run_command: python main.py
