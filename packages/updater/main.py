@@ -1,2 +1,5 @@
+import time
 print("big hype")
-exit(0)
+
+while True:
+    time.sleep(1000)
