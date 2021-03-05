@@ -43,7 +43,7 @@ client = session.client('s3',
 
 datastream = io.BytesIO(bytes(json.dumps(example_data), "ascii"))
 
-client.upload_fileobj(datastream, "ledger", "data.json")
+client.upload_fileobj(datastream, "ledger", "data.json", ExtraArgs={'ACL':'public-read'})
 
 while True:
     # params = {
@@ -57,4 +57,3 @@ while True:
 
     time.sleep(60) # Wait an hour
 
-print("script finished")
