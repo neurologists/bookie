@@ -41,7 +41,7 @@ client = session.client('s3',
                         aws_secret_access_key=os.environ["SPACES_SECRET"])
 
 
-datastream = io.StringIO(json.dumps(example_data))
+datastream = io.BytesIO(bytes(json.dumps(example_data), "ascii"))
 
 client.upload_fileobj(datastream, "ledger", "data.json")
 
