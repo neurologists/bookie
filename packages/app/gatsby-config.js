@@ -1,8 +1,8 @@
 module.exports = {
   siteMetadata: {
-    title: `🚀 WSB Activity Tracker 📈`,
-    description: `Kick off your next, great Gatsby project with your mom lmao. This barebones starter helps you get that bread, pleb`,
-    author: `@gatsbyjs`,
+    title: `🚀 WSB Explorer`,
+    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
+    author: `@neurologists`,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
@@ -18,13 +18,13 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `gatsby-starter-default`,
-        short_name: `starter`,
+        name: `wsb-explorer`,
+        short_name: `explorer`,
         start_url: `/`,
         background_color: `#663399`,
         theme_color: `#663399`,
         display: `minimal-ui`,
-        icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
+        icon: `src/images/logo-icon.png`, // This path is relative to the root of the site.
       },
     },
     {

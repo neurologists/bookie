@@ -15,7 +15,7 @@ example_data = {
     "prev_daily_mentions": 200,
     "daily_mentions": 300,
     "weekly_mentions": 999,
-    "p*rev_weekly_mentions": 1
+    "prev_weekly_mentions": 1
   },
   "AMZN": {
     "prev_daily_mentions": 0,

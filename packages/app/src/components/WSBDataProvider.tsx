@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from "react"
 
-const WSBDataContext = React.createContext({})
-
 interface TickerData {
   prev_daily_mentions: number
   daily_mentions: number
@@ -11,6 +9,8 @@ interface TickerData {
 
 type GMEData = { [ticker: string]: TickerData }
 
+const WSBDataContext = React.createContext<GMEData>({})
+
 const WSBDataProvider: React.FC<{}> = ({ children }) => {
   const [data, setData] = useState<GMEData>({})
   console.log("IM HERE HELP")
@@ -18,6 +18,7 @@ const WSBDataProvider: React.FC<{}> = ({ children }) => {
   const loadData = () => {
     fetch("https://ledger.nyc3.digitaloceanspaces.com/data.json")
       .then(response => {
+        console.log("data fetched")
         if (!response.ok) {
           throw new Error("Failed to fetch data!")
         }
