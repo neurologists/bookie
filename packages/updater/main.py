@@ -15,7 +15,7 @@ example_data = {
     "prev_daily_mentions": 200,
     "daily_mentions": 300,
     "weekly_mentions": 999,
-    "prev_weekly_mentions": 1
+    "p*rev_weekly_mentions": 1
   },
   "AMZN": {
     "prev_daily_mentions": 0,
@@ -45,16 +45,16 @@ datastream = io.BytesIO(bytes(json.dumps(example_data), "ascii"))
 
 client.upload_fileobj(datastream, "ledger", "data.json")
 
-# while True:
-#     # params = {
-#     #     "subreddit": "wallstreetbets",
-#     #     # "after": int(time.time() - 3600)
-#     # }
-#     # # params = {}
-#     # r = requests.get("https://api.pushshift.io/reddit/comment/search", params)
+while True:
+    # params = {
+    #     "subreddit": "wallstreetbets",
+    #     # "after": int(time.time() - 3600)
+    # }
+    # # params = {}
+    # r = requests.get("https://api.pushshift.io/reddit/comment/search", params)
     
-#     # print("response", r.text)
+    # print("response", r.text)
 
-#     time.sleep(60) # Wait an hour
+    time.sleep(60) # Wait an hour
 
 print("script finished")
