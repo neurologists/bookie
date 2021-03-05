@@ -1,0 +1,9 @@
+- Make the frontend do something vaguely useful with the data
+- Talk to reddit with praw
+- Save historical data on space with a private json
+- Save digested data on a public json for the site
+- Make these github issues
+
+
+X Make a DO space
+X Get the boto3s

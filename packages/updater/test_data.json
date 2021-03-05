@@ -1,0 +1,20 @@
+{
+  "GME": {
+    "prev_daily_mentions": 200,
+    "daily_mentions": 300,
+    "weekly_mentions": 999,
+    "prev_weekly_mentions": 1
+  },
+  "AMZN": {
+    "prev_daily_mentions": 0,
+    "daily_mentions": 2,
+    "weekly_mentions": 69,
+    "prev_weekly_mentions": 420
+  },
+  "TSLA": {
+    "prev_daily_mentions": 123,
+    "daily_mentions": 420,
+    "weekly_mentions": 69420,
+    "prev_weekly_mentions": 1
+  }
+}
