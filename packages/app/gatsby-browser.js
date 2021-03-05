@@ -5,3 +5,12 @@
  */
 
 // You can delete this file if you're not using it
+
+import React from "react"
+import { WSBDataProvider } from "./src/components/WSBDataProvider"
+
+const wrapRootElement = ({ element }) => {
+  return <WSBDataProvider>{element}</WSBDataProvider>
+}
+
+export { wrapRootElement }
