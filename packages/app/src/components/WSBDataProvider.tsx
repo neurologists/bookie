@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from "react"
 interface TickerData {
   prev_daily_mentions: number
   daily_mentions: number
+  last_sale: number
   weekly_mentions: number
   prev_weekly_mentions: number
 }

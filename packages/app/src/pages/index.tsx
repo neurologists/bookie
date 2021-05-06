@@ -32,14 +32,16 @@ const IndexPage = () => {
             <p>The most mentioned stocks today</p>
           </div>
           <CardGrid>
-            {Object.entries(data).map(([ticker, stats]) => (
-              <TickerCard
-                ticker={ticker}
-                price={"420.69"}
-                mentions={stats.daily_mentions}
-                prevMentions={stats.prev_daily_mentions}
-              />
-            ))}
+            {Object.entries(data)
+              .sort((a, b) => a[1].daily_mentions - b[1].daily_mentions)
+              .map(([ticker, stats]) => (
+                <TickerCard
+                  ticker={ticker}
+                  price={stats.last_sale}
+                  mentions={stats.daily_mentions}
+                  prevMentions={stats.prev_daily_mentions}
+                />
+              ))}
           </CardGrid>
         </div>
       </div>

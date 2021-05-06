@@ -1,35 +1,33 @@
-import time
 import praw
 import os
+from datetime import datetime
 import io
 # import boto3
 from boto3 import session
 from boto3.s3.transfer import S3Transfer
 import json
+import string
 import requests
+import re
 
-# from botocore.client import Config
+tickerMatch = re.compile("(?:\s|^)(?:\$([A-Za-z]{1,5})|([A-Z]{2,5}))(?=(?:[\s.,?!]|$))")
 
-example_data = {
-  "GME": {
-    "prev_daily_mentions": 200,
-    "daily_mentions": 300,
-    "weekly_mentions": 999,
-    "prev_weekly_mentions": 1
-  },
-  "AMZN": {
-    "prev_daily_mentions": 0,
-    "daily_mentions": 2,
-    "weekly_mentions": 69,
-    "prev_weekly_mentions": 420
-  },
-  "TSLA": {
-    "prev_daily_mentions": 123,
-    "daily_mentions": 420,
-    "weekly_mentions": 69420,
-    "prev_weekly_mentions": 1
-  }
-}
+tickerData = {}
+buckets = [{}]
+
+# returns a dict of key: ticker symbol value: symbol count, for th comment
+def parseComment(comment: str):
+    output = {}
+    candidates = []
+    for match in tickerMatch.finditer(comment):
+        groups =  [*match.groups()]
+        candidate = groups[0] if groups[0] else groups[1]
+        if candidate in tickerData:
+            if not candidate in output:
+                output[candidate] = 1
+            else:
+                output[candidate] += 1
+    return output
 
 # Initiate session
 session = session.Session()
@@ -41,19 +39,86 @@ client = session.client('s3',
                         aws_secret_access_key=os.environ["SPACES_SECRET"])
 
 
-datastream = io.BytesIO(bytes(json.dumps(example_data), "ascii"))
 
-client.upload_fileobj(datastream, "ledger", "data.json", ExtraArgs={'ACL':'public-read'})
 
-while True:
-    # params = {
-    #     "subreddit": "wallstreetbets",
-    #     # "after": int(time.time() - 3600)
-    # }
-    # # params = {}
-    # r = requests.get("https://api.pushshift.io/reddit/comment/search", params)
+last_time = datetime.now().strftime("%M")
+
+reddit = praw.Reddit(
+    client_id=os.environ["REDDIT_CLIENT_ID"],
+    client_secret=os.environ["REDDIT_SECRET"],
+    # password="PASSWORD",
+    user_agent=os.environ["REDDIT_USER_AGENT"],
+    # username="USERNAME",
+)
+
+def getTickerData():
+    payload = {'download': 'true'}
+    headers = {'Accept': 'application/json', 'Accept-Encoding': 'gzip', 'User-Agent': 'Bookie'}
+    r = requests.get('https://api.nasdaq.com/api/screener/stocks', params=payload, headers=headers)
+    return r.json()
+
+def createClientObject():
+    today = buckets[0:23]
+    aggregate = {}
+    for bucket in today:
+        for symbol in bucket:
+            if not symbol in aggregate:
+                aggregate[symbol] = {
+                    "daily_mentions": 1,
+                    "prev_daily_mentions": 0
+                }
+            else:
+                aggregate[symbol]["daily_mentions"] += 1
+
+    yesterday = buckets[24:47]
+    for bucket in yesterday:
+        for symbol in bucket:
+            if not symbol in aggregate:
+                aggregate[symbol] = {
+                    "daily_mentions": 0,
+                    "prev_daily_mentions": 1
+                }
+            else:
+                aggregate[symbol]["prev_daily_mentions"] += 1
+
+    for symbol in aggregate:
+        if symbol in tickerData:
+            aggregate[symbol]["last_sale"] = tickerData[symbol]["lastsale"]
+
+
+    return aggregate
+
+nasDat = getTickerData()
+
+for symbol in nasDat["data"]["rows"]:
+    tickerData[symbol["symbol"]] = symbol
+
+
+for comment in reddit.subreddit("wallstreetbets").stream.comments():
+    print(comment)
+
+    # Get the data from reddit
+    rawComment = comment.body
     
-    # print("response", r.text)
+    # process
+    mentioned = parseComment(rawComment)
+    for key in mentioned:
+        if not key in buckets[0]:
+            buckets[0][key] = 1
+        else:
+            buckets[0][key] += 1
 
-    time.sleep(60) # Wait an hour
+    # hourstr = datetime.now().strftime("%H")
+    hourstr = datetime.now().strftime("%M")
+    if (hourstr != last_time): #an hour has passed since the last update
+        last_time = hourstr
+        buckets.insert(0, {})
+        if len(buckets) > 49:
+            buckets.pop()
+        
+        data = createClientObject()
+        print(data)
+        # upload to the space
+        datastream = io.BytesIO(bytes(json.dumps(data), "ascii"))
+        client.upload_fileobj(datastream, "ledger", "data.json", ExtraArgs={'ACL':'public-read'})
 

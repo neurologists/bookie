@@ -1,9 +1,49 @@
 - Make the frontend do something vaguely useful with the data
+  - 
 - Talk to reddit with praw
+  - how this going
 - Save historical data on space with a private json
 - Save digested data on a public json for the site
-- Make these github issues
 
+#- Make these github issues
+#  - delet this  
+#  sadge :((
+
+(?:\s|^)(?:\$([A-Z]{1,5}|[a-z]{1,5})|([A-Z]{1,5}))(?=(?:[\s.,?!]|$))
 
 X Make a DO space
 X Get the boto3s
+
+
+WHAT TO DO: BASIC AS FUNCTIONALITY
+
+- use reddit jsons to get data
+    - we should do
+    - https://www.reddit.com/r/wallstreetbets/comments.json?limit=100
+    - https://www.reddit.com/r/wallstreetbets.json?limit=100
+- use apis to get the old data and integrate with current data
+  - JK too hard let's not :)
+  - what this mean
+- figure out what the hecking heck format we are storing this data in within the json
+  - what are we doing with the data
+  - what are we actually doing
+  - what is the goal
+  - stock counts
+  - do buckets exist
+    - no
+
+  - we write some json bullshit
+    - we can have whatever we want
+
+  - block by hour
+    - just the symbols and their counts
+    - cool story bro TM
+     
+    - ok question tho
+      - do we save the stock price at that hour with the symbols
+      - to be able to track the price along with mentions
+      - or do it not matter 
+
+- save internal data to a digital ocean space so we can resume if there is a service interuption
+  - JK too hard let's not :) yeah fuck this rn tbh
+
