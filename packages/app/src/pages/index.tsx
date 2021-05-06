@@ -33,7 +33,7 @@ const IndexPage = () => {
           </div>
           <CardGrid>
             {Object.entries(data)
-              .sort((a, b) => a[1].daily_mentions - b[1].daily_mentions)
+              .sort((a, b) => b[1].daily_mentions - a[1].daily_mentions)
               .map(([ticker, stats]) => (
                 <TickerCard
                   ticker={ticker}
