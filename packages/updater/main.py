@@ -52,10 +52,14 @@ reddit = praw.Reddit(
 )
 
 def getTickerData():
+    tickerDict = {}
     payload = {'download': 'true'}
     headers = {'Accept': 'application/json', 'Accept-Encoding': 'gzip', 'User-Agent': 'Bookie'}
     r = requests.get('https://api.nasdaq.com/api/screener/stocks', params=payload, headers=headers)
-    return r.json()
+    nasDat = r.json()
+    for symbol in nasDat["data"]["rows"]:
+        tickerDict[symbol["symbol"]] = symbol
+    return tickerDict
 
 def createClientObject():
     today = buckets[0:23]
@@ -88,11 +92,7 @@ def createClientObject():
 
     return aggregate
 
-nasDat = getTickerData()
-
-for symbol in nasDat["data"]["rows"]:
-    tickerData[symbol["symbol"]] = symbol
-
+tickerData = getTickerData()
 
 for comment in reddit.subreddit("wallstreetbets").stream.comments():
     print(comment)
@@ -100,7 +100,7 @@ for comment in reddit.subreddit("wallstreetbets").stream.comments():
     # Get the data from reddit
     rawComment = comment.body
     
-    # process
+    # proce
     mentioned = parseComment(rawComment)
     for key in mentioned:
         if not key in buckets[0]:
@@ -116,6 +116,7 @@ for comment in reddit.subreddit("wallstreetbets").stream.comments():
         if len(buckets) > 49:
             buckets.pop()
         
+        tickerData = getTickerData()
         data = createClientObject()
         print(data)
         # upload to the space
