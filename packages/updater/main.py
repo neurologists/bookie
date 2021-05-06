@@ -1,3 +1,5 @@
+print("Starting bookie server")
+
 import praw
 import os
 from datetime import datetime
@@ -10,10 +12,36 @@ import string
 import requests
 import re
 
+print("Imports worked")
+
 tickerMatch = re.compile("(?:\s|^)(?:\$([A-Za-z]{1,5})|([A-Z]{2,5}))(?=(?:[\s.,?!]|$))")
 
 tickerData = {}
 buckets = [{}]
+last_time = datetime.now().strftime("%M")
+
+
+# Initiate session
+session = session.Session()
+client = session.client('s3',
+                        region_name='nyc3', #enter your own region_name
+                        endpoint_url='https://nyc3.digitaloceanspaces.com', #enter your own endpoint url
+
+                        aws_access_key_id=os.environ["SPACES_ACCESS"],
+                        aws_secret_access_key=os.environ["SPACES_SECRET"])
+
+print("Initialized s3 connection")
+
+# Load reddit
+reddit = praw.Reddit(
+    client_id=os.environ["REDDIT_CLIENT_ID"],
+    client_secret=os.environ["REDDIT_SECRET"],
+    # password="PASSWORD",
+    user_agent=os.environ["REDDIT_USER_AGENT"],
+    # username="USERNAME",
+)
+
+print("Initialized reddit connection")
 
 # returns a dict of key: ticker symbol value: symbol count, for th comment
 def parseComment(comment: str):
@@ -29,28 +57,6 @@ def parseComment(comment: str):
                 output[candidate] += 1
     return output
 
-# Initiate session
-session = session.Session()
-client = session.client('s3',
-                        region_name='nyc3', #enter your own region_name
-                        endpoint_url='https://nyc3.digitaloceanspaces.com', #enter your own endpoint url
-
-                        aws_access_key_id=os.environ["SPACES_ACCESS"],
-                        aws_secret_access_key=os.environ["SPACES_SECRET"])
-
-
-
-
-last_time = datetime.now().strftime("%M")
-
-reddit = praw.Reddit(
-    client_id=os.environ["REDDIT_CLIENT_ID"],
-    client_secret=os.environ["REDDIT_SECRET"],
-    # password="PASSWORD",
-    user_agent=os.environ["REDDIT_USER_AGENT"],
-    # username="USERNAME",
-)
-
 def getTickerData():
     tickerDict = {}
     payload = {'download': 'true'}
@@ -60,6 +66,10 @@ def getTickerData():
     for symbol in nasDat["data"]["rows"]:
         tickerDict[symbol["symbol"]] = symbol
     return tickerDict
+
+tickerData = getTickerData()
+
+print("Loaded NASDAQ data")
 
 def createClientObject():
     today = buckets[0:23]
@@ -92,7 +102,7 @@ def createClientObject():
 
     return aggregate
 
-tickerData = getTickerData()
+print("Running primary loop")
 
 for comment in reddit.subreddit("wallstreetbets").stream.comments():
     print(comment)
