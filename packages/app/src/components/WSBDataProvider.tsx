@@ -16,8 +16,10 @@ const WSBDataProvider: React.FC<{}> = ({ children }) => {
   const [data, setData] = useState<GMEData>({})
   console.log("IM HERE HELP")
 
+  const randomInt = Math.round(Math.random() * 1000000)
+
   const loadData = () => {
-    fetch("https://ledger.nyc3.digitaloceanspaces.com/data.json")
+    fetch("https://ledger.nyc3.digitaloceanspaces.com/data.json?a=" + randomInt)
       .then(response => {
         console.log("data fetched")
         if (!response.ok) {
