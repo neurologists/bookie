@@ -17,6 +17,7 @@ print("Imports worked")
 tickerMatch = re.compile("(?:\s|^)(?:\$([A-Za-z]{1,5})|([A-Z]{2,5}))(?=(?:[\s.,?!]|$))")
 
 tickerData = {}
+comments = {}
 buckets = [{}]
 last_min = datetime.now().strftime("%M")
 last_hour = datetime.now().strftime("%H")
@@ -112,6 +113,13 @@ while(True):
 
             # Get the data from reddit
             rawComment = comment.body
+
+            # comment de-dupe on reinitialize after error
+            if (comment.id in comments):
+                continue
+            else:
+                comments[comment.id] = True
+
             
             # process data
             mentioned = parseComment(rawComment)
