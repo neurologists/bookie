@@ -105,42 +105,49 @@ def createClientObject():
 
 print("Running primary loop")
 
-for comment in reddit.subreddit("wallstreetbets").stream.comments():
-    print(comment)
+while(True):
+    try:
+        for comment in reddit.subreddit("wallstreetbets").stream.comments():
+            print(comment)
 
-    # Get the data from reddit
-    rawComment = comment.body
+            # Get the data from reddit
+            rawComment = comment.body
+            
+            # process data
+            mentioned = parseComment(rawComment)
+            for key in mentioned:
+                if not key in buckets[0]:
+                    buckets[0][key] = 1
+                else:
+                    buckets[0][key] += 1
+
+            # perform minute updates
+            minstr = datetime.now().strftime("%M")
+            if (minstr != last_min):
+                last_min = minstr
+
+                # pull new data every 5 minutes
+                if (int(minstr) % 5 == 0):
+                    tickerData = getTickerData()
+
+                data = createClientObject()
+                print(data)
+                # upload to the space
+                datastream = io.BytesIO(bytes(json.dumps(data), "ascii"))
+                client.upload_fileobj(datastream, "ledger", "data.json", ExtraArgs={'ACL':'public-read'})
+
+
+            # perform hour updates
+            hourstr = datetime.now().strftime("%H")
+            if (hourstr != last_hour): #an hour has passed since the last update
+                last_hour = hourstr
+                buckets.insert(0, {})
+                if len(buckets) > 49:
+                    buckets.pop()
     
-    # process data
-    mentioned = parseComment(rawComment)
-    for key in mentioned:
-        if not key in buckets[0]:
-            buckets[0][key] = 1
-        else:
-            buckets[0][key] += 1
+    except KeyboardInterrupt:
+        print("Quitting :)")
+        break
 
-    # perform minute updates
-    minstr = datetime.now().strftime("%M")
-    if (minstr != last_min):
-        last_min = minstr
-
-        # pull new data every 5 minutes
-        if (int(minstr) % 5 == 0):
-            tickerData = getTickerData()
-
-        data = createClientObject()
-        print(data)
-        # upload to the space
-        datastream = io.BytesIO(bytes(json.dumps(data), "ascii"))
-        client.upload_fileobj(datastream, "ledger", "data.json", ExtraArgs={'ACL':'public-read'})
-
-
-    # perform hour updates
-    hourstr = datetime.now().strftime("%H")
-    if (hourstr != last_hour): #an hour has passed since the last update
-        last_hour = hourstr
-        buckets.insert(0, {})
-        if len(buckets) > 49:
-            buckets.pop()
-        
-
+    except:
+        print("Unexpected error, retrying...")
